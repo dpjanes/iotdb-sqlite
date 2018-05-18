@@ -1,5 +1,5 @@
 /*
- *  index.js
+ *  db/index.js
  *
  *  David Janes
  *  IOTDB.org
@@ -20,7 +20,12 @@
  *  limitations under the License.
  */
 
-"use strict"
+"use strict";
 
-module.exports = require("./lib")
-module.exports.db = require("./db")
+module.exports = Object.assign(
+    {},
+    require("./initialize"),
+    require("./create"),
+    require("./drop"),
+    {}
+)
