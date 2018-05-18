@@ -3,7 +3,7 @@
  *
  *  David Janes
  *  IOTDB
- *  2018-05-18
+ *  2018-01-24
  *
  *  Copyright [2013-2018] [David P. Janes]
  *
@@ -43,7 +43,9 @@ const ok_error = (done, code) => error => {
  */
 const initialize = _.promise.make((self, done) => {
     _.promise.make(self)
-        .then(_.promise.add("sqlited", require("./data/sqlite.json")))
+        .then(_.promise.add("sqlited", {
+            path: ":memory:",
+        }))
         .then(sqlite.initialize)
         .then(_.promise.done(done, self, "sqlite"))
         .catch(done)

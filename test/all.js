@@ -1,9 +1,9 @@
 /**
- *  test/initialize.js
+ *  test/all.js
  *
  *  David Janes
  *  IOTDB
- *  2018-01-24
+ *  2018-01-25
  *
  *  Copyright [2013-2018] [David P. Janes]
  *
@@ -29,7 +29,7 @@ const assert = require("assert");
 const sqlite = require("..")
 const _util = require("./_util")
 
-describe("initialize", function() {
+describe("all", function() {
     let self = {}
 
     before(function(done) {
@@ -46,8 +46,15 @@ describe("initialize", function() {
     describe("good", function() {
         it("works", function(done) {
             _.promise.make(self)
+                .then(_.promise.optional(sqlite.all.p("DROP TABLE items")))
+                .then(sqlite.all.p("CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, text VARCHAR(40) not null, complete BOOLEAN)"))
+                .then(sqlite.all.p("INSERT INTO items(text, complete) values(?, ?)", [ "hello", true ]))
+                .then(sqlite.all.p("SELECT * FROM items"))
                 .then(_.promise.make(sd => {
-                    assert.ok(sd.sqlite)
+                    assert.ok(sd.jsons)
+                    assert.ok(sd.json)
+                    assert.deepEqual(sd.jsons.length, 1)
+                    assert.deepEqual(sd.count, 1)
                 }))
                 .then(_.promise.done(done))
                 .catch(done)
