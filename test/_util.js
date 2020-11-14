@@ -20,16 +20,16 @@
  *  limitations under the License.
  */
 
-"use strict";
+"use strict"
 
-const _ = require("iotdb-helpers");
+const _ = require("iotdb-helpers")
 
-const assert = require("assert");
-const path = require("path");
+const assert = require("assert")
+const path = require("path")
 
 const sqlite = require("..")
 
-const auto_fail = done => _.promise.make(self => done(new Error("didn't expect to get here")));
+const auto_fail = done => _.promise(self => done(new Error("didn't expect to get here")))
 const ok_error = (done, code) => error => {
     if (code && (_.error.code(error) !== code)) {
         return done(error)
@@ -41,21 +41,19 @@ const ok_error = (done, code) => error => {
 /**
  *  Standard connection
  */
-const initialize = _.promise.make((self, done) => {
-    _.promise.make(self)
-        .then(_.promise.add("sqlited", {
+const initialize = _.promise((self, done) => {
+    _.promise(self)
+        .add("sqlite$cfg", {
             path: ":memory:",
-        }))
+        })
         .then(sqlite.initialize)
-        .then(_.promise.done(done, self, "sqlite"))
-        .catch(done)
+        .end(done, self, "sqlite")
 })
-
 
 /**
  *  API
  */
-exports.auto_fail = auto_fail;
-exports.ok_error = ok_error;
+exports.auto_fail = auto_fail
+exports.ok_error = ok_error
 
-exports.initialize = initialize;
+exports.initialize = initialize

@@ -33,24 +33,21 @@ describe("initialize", function() {
     let self = {}
 
     before(function(done) {
-        _.promise.make(self)
+        _.promise(self)
             .then(_util.initialize)
-            // .then(_util.load)
-            .then(_.promise.make(sd => {
-                self = sd;
-            }))
-            .then(_.promise.done(done))
-            .catch(done)
+            .make(sd => {
+                self = sd
+            })
+            .end(done, {})
     })
 
     describe("good", function() {
         it("works", function(done) {
-            _.promise.make(self)
-                .then(_.promise.make(sd => {
+            _.promise(self)
+                .make(sd => {
                     assert.ok(sd.sqlite)
-                }))
-                .then(_.promise.done(done))
-                .catch(done)
+                })
+                .end(done, {})
         })
     })
 })

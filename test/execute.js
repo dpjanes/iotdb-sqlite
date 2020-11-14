@@ -1,5 +1,5 @@
 /**
- *  test/all.js
+ *  test/execute.js
  *
  *  David Janes
  *  IOTDB
@@ -29,35 +29,32 @@ const assert = require("assert");
 const sqlite = require("..")
 const _util = require("./_util")
 
-describe("all", function() {
+describe("execute", function() {
     let self = {}
 
     before(function(done) {
-        _.promise.make(self)
+        _.promise(self)
             .then(_util.initialize)
-            // .then(_util.load)
-            .then(_.promise.make(sd => {
+            .make(sd => {
                 self = sd;
-            }))
-            .then(_.promise.done(done))
-            .catch(done)
+            })
+            .end(done, {})
     })
 
     describe("good", function() {
         it("works", function(done) {
-            _.promise.make(self)
-                .then(_.promise.optional(sqlite.all.p("DROP TABLE items")))
-                .then(sqlite.all.p("CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, text VARCHAR(40) not null, complete BOOLEAN)"))
-                .then(sqlite.all.p("INSERT INTO items(text, complete) values(?, ?)", [ "hello", true ]))
-                .then(sqlite.all.p("SELECT * FROM items"))
-                .then(_.promise.make(sd => {
+            _.promise(self)
+                // .optional(sqlite.execute.p("DROP TABLE items"))
+                .then(sqlite.execute.p("CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, text VARCHAR(40) not null, complete BOOLEAN)"))
+                .then(sqlite.execute.p("INSERT INTO items(text, complete) values(?, ?)", [ "hello", true ]))
+                .then(sqlite.execute.p("SELECT * FROM items"))
+                .make(sd => {
                     assert.ok(sd.jsons)
                     assert.ok(sd.json)
                     assert.deepEqual(sd.jsons.length, 1)
                     assert.deepEqual(sd.count, 1)
-                }))
-                .then(_.promise.done(done))
-                .catch(done)
+                })
+                .end(done, {})
         })
     })
 })
