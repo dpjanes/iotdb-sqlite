@@ -24,30 +24,39 @@
 
 const _ = require("iotdb-helpers")
 
-const sqlite = require("pg")
-
-const assert = require("assert")
-
 /*
- *  Requires: self.sqlite, self.table_schema
- *  Produces: self.sqlite_result
- *
- *  Drop a Table
  */
 const drop = _.promise.make((self, done) => {
-    const method = "db.drop";
-
-    assert.ok(self.sqlite, `${method}: expected self.sqlite`)
-    assert.ok(self.table_schema, `${method}: expected self.table_schema`)
-    assert.ok(self.table_schema.name, `${method}: expected self.table_schema.name`)
-
-    const statement = `DROP TABLE ${self.table_schema.name}`;
+    const sqlite = require("..")
 
     _.promise.make(self)
-        .then(sqlite.run.p(statement))
-        .then(_.promise.done(done, self))
-        .catch(done)
+        .validate(drop)
+        
+        .make(sd => {
+            sd.statement = `DROP TABLE ${self.table_schema.name}`
+            sd.params = {}
+        })
+        .then(sqlite.run)
+
+        .end(done, self, drop)
 })
+
+drop.method = "db.drop"
+drop.description = `Drop a Table`
+drop.requires = {
+    sqlite: _.is.Object,
+    table_schema: {
+        name: _.is.String,
+    },
+}
+drop.accepts = {
+}
+drop.produces = {
+}
+drop.params = {
+    table_schema: _.p.normal,
+}
+drop.p = _.p(drop)
 
 /**
  *  API

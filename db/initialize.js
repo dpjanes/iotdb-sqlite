@@ -24,16 +24,19 @@
 
 const _ = require("iotdb-helpers")
 
-const assert = require("assert")
-
 /**
- *  Currently does nothing, but call me anyway
  */
-const initialize = _.promise.make((self, done) => {
-    const method = "initialize";
-
-    done(null, self)
+const initialize = _.promise(self => {
 })
+
+initialize.method = "db.initialize"
+initialize.description = `Currently does nothing, but call me anyway`
+initialize.requires = {
+}
+initialize.accepts = {
+}
+initialize.produces = {
+}
 
 /**
  *  API

@@ -24,36 +24,43 @@
 
 const _ = require("iotdb-helpers")
 
-const sqlite = require("pg")
-
-const assert = require("assert")
-
 /*
- *  Requires: self.sqlite, self.table_schema
- *  Produces: N/A
- *
- *  Create a Table
  */
-const create = _.promise.make((self, done) => {
-    const method = "db.create";
+const create = _.promise((self, done) => {
+    const sqlite = require("..")
 
-    assert.ok(self.sqlite, `${method}: expected self.sqlite`)
-    assert.ok(self.table_schema, `${method}: expected self.table_schema`)
-    assert.ok(self.table_schema.name, `${method}: expected self.table_schema.name`)
-    assert.ok(self.table_schema.keys, `${method}: expected self.table_schema.keys`)
-    assert.ok(self.table_schema.keys.length, `${method}: expected self.table_schema.keys`)
+    _.promise(self)
+        .validate(create)
+        
+        .make(sd => {
+            const columns = (sd.table_schema.columns || []).map(cd => `${cd.name} ${cd.type}`)
+            columns.push(`PRIMARY KEY (${sd.table_schema.keys.join(", ")})`)
 
-    const columns = (self.table_schema.columns || []).map(cd => `${cd.name} ${cd.type}`);
+            sd.statement = `CREATE TABLE ${sd.table_schema.name}(${columns.join(", ")})`
+            sd.params = {}
+        })
+        .then(sqlite.run)
 
-    columns.push(`PRIMARY KEY (${self.table_schema.keys.join(", ")})`)
-
-    const statement = `CREATE TABLE ${self.table_schema.name}(${columns.join(", ")})`;
-
-    _.promise.make(self)
-        .then(sqlite.run.p(statement))
-        .then(_.promise.done(done, self))
-        .catch(done)
+        .end(done, self, create)
 })
+
+create.method = "db.create"
+create.description = `Create a table`
+create.requires = {
+    sqlite: _.is.Object,
+    table_schema: {
+        name: _.is.String,
+        keys: _.is.Array,
+    },
+}
+create.accepts = {
+}
+create.produces = {
+}
+create.params = {
+    table_schema: _.p.normal,
+}
+create.p = _.p(create)
 
 /**
  *  API
