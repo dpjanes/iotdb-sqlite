@@ -44,13 +44,12 @@ describe("list", function() {
     describe("good", function() {
         it("works", function(done) {
             _.promise(self)
-                // .then(sqlite.run.p("DROP TABLE items"))
-                .then(sqlite.run.p("CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, text VARCHAR(40) not null, complete BOOLEAN)"))
-                .then(sqlite.run.p("INSERT INTO items(text, complete) values(?, ?)", [ "hello", true ]))
+                .then(sqlite.execute.p("DROP TABLE items", null, sqlite.IGNORE))
+                .then(sqlite.execute.p("CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, text VARCHAR(40) not null, complete BOOLEAN)"))
+                .then(sqlite.execute.p("INSERT INTO items(text, complete) values(?, ?)", [ "hello", true ]))
                 .then(sqlite.list.p("SELECT * FROM items"))
                 .make(sd => {
                     assert.ok(sd.jsons)
-                    assert.ok(sd.json)
                     assert.deepEqual(sd.jsons.length, 1)
                     assert.deepEqual(sd.count, 1)
                 })

@@ -46,7 +46,7 @@ describe("db/create", function() {
     describe("good", function() {
         it("simple", function(done) {
             _.promise(self)
-                .then(_.promise.optional(sqlite.run.p("DROP TABLE items")))
+                .then(sqlite.execute.p("DROP TABLE items", null, sqlite.IGNORE))
 
                 .then(fs.read.json.p(path.join(__dirname, "data", "items.schema.json")))
                 .add("json:table_schema")
@@ -58,7 +58,7 @@ describe("db/create", function() {
         })
         it("complex", function(done) {
             _.promise(self)
-                .then(_.promise.optional(sqlite.run.p("DROP TABLE place_mine")))
+                .then(sqlite.execute.p("DROP TABLE place_mine", null, sqlite.IGNORE))
 
                 .then(fs.read.json.p(path.join(__dirname, "data", "place_mine.schema.json")))
                 .add("json:table_schema")
