@@ -55,5 +55,20 @@ describe("list", function() {
                 })
                 .end(done, {})
         })
+        it("JSON1 extension", function(done) {
+            _.promise(self)
+                .then(sqlite.execute.p("DROP TABLE lorem", null, sqlite.IGNORE))
+                .then(sqlite.execute.p("CREATE TABLE lorem (info TEXT)"))
+                .then(sqlite.execute.p("INSERT INTO lorem VALUES(json(?))", [ JSON.stringify({ "hello": "world" }) ]))
+                .then(sqlite.list.p("SELECT rowid AS id, json_extract(info, \'$.hello\') AS info FROM lorem"))
+    
+                .make(sd => {
+                    console.log(sd.jsons)
+                    assert.ok(sd.jsons)
+                    assert.deepEqual(sd.jsons.length, 1)
+                    assert.deepEqual(sd.count, 1)
+                })
+                .end(done, {})
+        })
     })
 })
