@@ -1,5 +1,5 @@
 /**
- *  test/execute.js
+ *  test/list.js
  *
  *  David Janes
  *  IOTDB
@@ -29,7 +29,7 @@ const assert = require("assert");
 const sqlite = require("..")
 const _util = require("./_util")
 
-describe("execute", function() {
+describe("list", function() {
     let self = {}
 
     before(function(done) {
@@ -44,10 +44,10 @@ describe("execute", function() {
     describe("good", function() {
         it("works", function(done) {
             _.promise(self)
-                // .optional(sqlite.execute.p("DROP TABLE items"))
-                .then(sqlite.execute.p("CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, text VARCHAR(40) not null, complete BOOLEAN)"))
-                .then(sqlite.execute.p("INSERT INTO items(text, complete) values(?, ?)", [ "hello", true ]))
-                .then(sqlite.execute.p("SELECT * FROM items"))
+                // .then(sqlite.run.p("DROP TABLE items"))
+                .then(sqlite.run.p("CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, text VARCHAR(40) not null, complete BOOLEAN)"))
+                .then(sqlite.run.p("INSERT INTO items(text, complete) values(?, ?)", [ "hello", true ]))
+                .then(sqlite.list.p("SELECT * FROM items"))
                 .make(sd => {
                     assert.ok(sd.jsons)
                     assert.ok(sd.json)
