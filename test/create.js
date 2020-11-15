@@ -1,11 +1,11 @@
 /**
- *  test/db/create.js
+ *  test/create.js
  *
  *  David Janes
  *  IOTDB
  *  2018-01-25
  *
- *  Copyright [2013-2018] [David P. Janes]
+ *  Copyright (2013-2021) David P. Janes
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,58 +20,53 @@
  *  limitations under the License.
  */
 
-"use strict";
+"use strict"
 
-const _ = require("iotdb-helpers");
+const _ = require("iotdb-helpers")
 const fs = require("iotdb-fs")
 
-const assert = require("assert");
-const path = require("path");
+const assert = require("assert")
+const path = require("path")
 
-const sqlite = require("../..")
-const _util = require("./../_util")
+const sqlite = require("..")
+const _util = require("./_util")
 
 describe("db/create", function() {
     let self = {}
 
     before(function(done) {
-        _.promise.make(self)
+        _.promise(self)
             .then(_util.initialize)
-            .then(_.promise.make(sd => {
-                self = sd;
-            }))
-            .then(_.promise.done(done))
-            .catch(done)
+            .make(sd => {
+                self = sd
+            })
+            .end(done, {})
     })
 
     describe("good", function() {
         it("simple", function(done) {
-            _.promise.make(self)
+            _.promise(self)
                 .then(_.promise.optional(sqlite.execute.p("DROP TABLE items")))
 
-                .then(_.promise.add("path", path.join(__dirname, "..", "data", "items.schema.json")))
-                .then(fs.read.json)
-                .then(_.promise.add("json:table_schema"))
-                .then(sqlite.db.create)
-                .then(_.promise.make(sd => {
+                .then(fs.read.json.p(path.join(__dirname, "data", "items.schema.json")))
+                .add("json:table_schema")
+                .then(sqlite.create)
+                .make(sd => {
                     // assert.deepEqual(sd.postgres_result.command, "CREATE")
-                }))
-                .then(_.promise.done(done))
-                .catch(done)
+                })
+                .end(done, {})
         })
         it("complex", function(done) {
-            _.promise.make(self)
+            _.promise(self)
                 .then(_.promise.optional(sqlite.execute.p("DROP TABLE place_mine")))
 
-                .then(_.promise.add("path", path.join(__dirname, "..", "data", "place_mine.schema.json")))
-                .then(fs.read.json)
-                .then(_.promise.add("json:table_schema"))
-                .then(sqlite.db.create)
-                .then(_.promise.make(sd => {
+                .then(fs.read.json.p(path.join(__dirname, "data", "place_mine.schema.json")))
+                .add("json:table_schema")
+                .then(sqlite.create)
+                .make(sd => {
                     // assert.deepEqual(sd.postgres_result.command, "CREATE")
-                }))
-                .then(_.promise.done(done))
-                .catch(done)
+                })
+                .end(done, {})
         })
     })
 })
